@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Shree Ganesh Roadlines Bill</title>
+
+<style>
+@page { size: A4; margin: 20mm; }
+
+body { font-family: Arial, sans-serif; background:#f2f2f2; }
+
+.container {
+    width:210mm; min-height:297mm;
+    margin:auto; background:white;
+    padding:20px 30px; border:1px solid #000;
+}
+
+.header { text-align:center; border-bottom:2px solid #000; padding-bottom:10px; }
+
+.header-row {
+    display:flex; justify-content:space-between; align-items:center;
+}
+
+.phones-left,.phones-right { width:33%; font-weight:bold; }
+.phones-left{text-align:left;} .phones-right{text-align:right;}
+.logo{width:33%; text-align:center;}
+.logo img{height:60px;}
+
+.row{margin:10px 0;}
+.row label{width:170px; display:inline-block; font-weight:bold;}
+
+.row input,.top-info input{
+    width:65%; border:none; border-bottom:1.5px solid black;
+    outline:none; background:transparent; font-weight:bold;
+    font-size:15px; padding:2px 4px;
+}
+
+.top-info{display:flex; justify-content:space-between; margin-top:20px;}
+
+.footer{display:flex; justify-content:space-between; margin-top:50px;}
+.bank{font-weight:bold;}
+.signature{text-align:center;}
+.sign-img{height:50px;}
+
+.download-buttons{text-align:center; margin:25px 0;}
+.download-buttons button{padding:10px 25px; font-size:16px; margin:5px; cursor:pointer;}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+    <div class="header-row">
+        <div class="phones-left">📞 9175416609<br>📞 7678093009</div>
+        <div class="logo"><img src="ganesha.png"></div>
+        <div class="phones-right">📞 9673543082</div>
+    </div>
+    <h1>SHREE GANESH ROADLINES</h1>
+    <h3>FLEET OWNERS & TRANSPORT CONTRACTORS</h3>
+    <p>Shop No.52, Jai Ganeshji Society, Plot No-34, Sector-36, Kamothe, Navi Mumbai - 410209</p>
+</div>
+
+<div class="top-info">
+    <div><b>Bill No:</b> <input></div>
+    <div><b>Date:</b> <input type="text" placeholder="DD/MM/YYYY"></div>
+</div>
+
+<div class="row"><label>To, M/s:</label><input></div>
+
+<div class="top-info" style="gap:50px;">
+    <div><strong><label>Truck No:</label></strong> <input></div>
+    <div><strong><label>Date:</label> <input type="text" placeholder="DD/MM/YYYY"></strong></div>
+</div>
+
+<div class="row"><label>Station From:</label><input></div>
+<div class="row"><label>To:</label><input></div>
+<div class="row"><label>G.R:</label><input></div>
+
+<div class="row"><label>Rate:</label><input id="rate" oninput="calculateFreightTotal()"></div>
+<div class="row"><label>Weight:</label><input id="weight" oninput="calculateFreightTotal()"></div>
+<div class="row"><label>Freight:</label><input id="freight" readonly></div>
+<div class="row"><label>Less Advance:</label><input id="advance" oninput="calculateFreightTotal()"></div>
+<div class="row"><label>Less C/S Advance:</label><input id="cadvance" oninput="calculateFreightTotal()"></div>
+<div class="row"><label>Less Munshana:</label><input id="munshana" oninput="calculateFreightTotal()"></div>
+<div class="row"><label>Less TDS:</label><input id="tds" oninput="calculateFreightTotal()"></div>
+<div class="row"><label>Total Balance:</label><input id="total" readonly></div>
+<div class="row"><label>Other Charges:</label><input id="other" oninput="calculateFreightTotal()"></div>
+<div class="row"><label>Please Pay Rs:</label><input id="payrs" readonly></div>
+
+<div class="footer">
+    <div class="bank">
+        Bank Details:<br>
+        SHREE GANESH ROADLINES<br>
+        Account No: 50200063438341<br>
+        IFSC: HDFC0003997<br>
+        Branch: Kamothe<br>
+        PAN: AEOFS0745L
+    </div>
+
+    <div class="signature">
+        Thanks!<br><br>
+        For SHREE GANESH ROADLINES<br><br>
+        <img src="sign.png" class="sign-img"><br>
+        Manager
+    </div>
+</div>
+
+</div>
+
+<div class="download-buttons">
+    <button onclick="downloadPDF()">Download PDF</button>
+    <button onclick="downloadImage()">Download Image</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+const rateInput = document.getElementById('rate');
+const weightInput = document.getElementById('weight');
+const freightInput = document.getElementById('freight');
+const advanceInput = document.getElementById('advance');
+const csadvanceInput = document.getElementById('cadvance');
+const munshanaInput = document.getElementById('munshana');
+const tdsInput = document.getElementById('tds');
+const totalInput = document.getElementById('total');
+const otherInput = document.getElementById('other');
+const payrsInput = document.getElementById('payrs');
+
+function parseVal(v){
+    return parseFloat(v.replace(/,/g,'')) || 0;
+}
+
+function formatINR(num){
+    return new Intl.NumberFormat('en-IN', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(num);
+}
+
+function calculateFreightTotal() {
+    let rate = parseVal(rateInput.value);
+    let weight = parseVal(weightInput.value);
+    let advance = parseVal(advanceInput.value);
+    let csadvance = parseVal(csadvanceInput.value);
+    let munshana = parseVal(munshanaInput.value);
+    let tds = parseVal(tdsInput.value);
+    let other = parseVal(otherInput.value);
+
+    let freight = rate * weight;
+    freightInput.value = formatINR(freight);
+
+    let total = freight - advance - csadvance - munshana - tds;
+    totalInput.value = formatINR(total);
+
+    let payrs = total + other;
+    payrsInput.value = formatINR(payrs);
+}
+
+function downloadImage() {
+    html2canvas(document.querySelector(".container"), {scale:2}).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "Shree-Ganesh-Bill.png";
+        link.href = canvas.toDataURL();
+        link.click();
+    });
+}
+
+function downloadPDF() {
+    html2canvas(document.querySelector(".container"), {scale:2}).then(canvas => {
+        const imgData = canvas.toDataURL("image/png");
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF("p","mm","a4");
+        const pdfWidth = 210;
+        const pdfHeight = canvas.height * pdfWidth / canvas.width;
+        pdf.addImage(imgData,"PNG",0,0,pdfWidth,pdfHeight);
+        pdf.save("Shree-Ganesh-Bill.pdf");
+    });
+}
+</script>
+
+</body>
+</html>
